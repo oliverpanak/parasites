@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 36c3a2e3e7891e04d8e5ab1e54ac6108
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 112000000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 325134
+  packageName: PolyPeople Series - City People
+  packageVersion: 1.0
+  assetPath: Assets/CityPeople/Scenes/Demo_Settings/LightingData.asset
+  uploadId: 784042
