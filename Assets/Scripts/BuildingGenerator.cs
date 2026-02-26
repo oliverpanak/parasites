@@ -32,6 +32,12 @@ public class BuildingGenerator : MonoBehaviour
     [Header("Rubble Blocks")]
     public WeightedPrefab[] rubbleBlocks;
 
+    [Header("Roof Edge Blocks (perimeter of roof surface)")]
+    public WeightedPrefab[] roofEdgeBlocks;
+
+    [Header("Roof Center Blocks (interior of roof surface)")]
+    public WeightedPrefab[] roofCenterBlocks;
+
     [Header("Building Dimensions (Bounding Box)")]
     [Min(3)] public int width = 10;
     [Min(3)] public int depth = 10;
@@ -363,7 +369,8 @@ public class BuildingGenerator : MonoBehaviour
                     int localTop = columnTopY[x, z];
                     float heightT = (float)y / Mathf.Max(1, height - 1);
 
-                    GameObject prefab = ChooseBlock(u, y, heightT, localTop, patternW, patternH);
+                    GameObject prefab = ChooseBlock(u, y, heightT, localTop, patternW, patternH,
+                        front, back, left, right, top);
                     if (prefab == null) continue;
 
                     GameObject block = InstantiateBlock(prefab);
@@ -376,9 +383,17 @@ public class BuildingGenerator : MonoBehaviour
     }
 
     private GameObject ChooseBlock(int u, int y, float heightT, int localTop,
-        int patternW, int patternH)
+        int patternW, int patternH,
+        bool front, bool back, bool left, bool right, bool top)
     {
-        // Rooftop zone: top rows of each column
+        // Roof surface: topmost block in column with exposed top
+        if (y == localTop && top)
+        {
+            bool isEdge = front || back || left || right;
+            return isEdge ? PickRoofEdgeBlock() : PickRoofCenterBlock();
+        }
+
+        // Rooftop zone: rows near the top (below the roof surface)
         if (rooftopRows > 0 && localTop >= 0 && y > localTop - rooftopRows && y >= groundFloorHeight)
             return PickRooftopBlock();
 
@@ -440,6 +455,16 @@ public class BuildingGenerator : MonoBehaviour
         return rng.NextDouble() < t
             ? PickFromList(topConcreteBlocks)
             : PickFromList(bottomConcreteBlocks);
+    }
+
+    private GameObject PickRoofEdgeBlock()
+    {
+        return PickFromList(roofEdgeBlocks) ?? PickRooftopBlock();
+    }
+
+    private GameObject PickRoofCenterBlock()
+    {
+        return PickFromList(roofCenterBlocks) ?? PickRooftopBlock();
     }
 
     private GameObject PickRooftopBlock()
