@@ -38,6 +38,12 @@ public class BuildingGenerator : MonoBehaviour
     [Header("Roof Center Blocks (interior of roof surface)")]
     public WeightedPrefab[] roofCenterBlocks;
 
+    [Header("Sidewalk Blocks")]
+    public WeightedPrefab[] sidewalkBlocks;
+
+    [Tooltip("How many blocks the sidewalk extends outward from the building")]
+    [Min(0)] public int sidewalkWidth = 2;
+
     [Header("Building Dimensions (Bounding Box)")]
     [Min(3)] public int width = 10;
     [Min(3)] public int depth = 10;
@@ -116,6 +122,7 @@ public class BuildingGenerator : MonoBehaviour
         BuildOccupancyGrid();
         ComputeColumnTopY();
         PlaceAllBlocks();
+        PlaceSidewalk();
     }
 
     public void ClearBuilding()
@@ -378,6 +385,47 @@ public class BuildingGenerator : MonoBehaviour
                     block.transform.localRotation = rot;
                     block.name = $"{prefab.name}_{x}_{y}_{z}";
                 }
+            }
+        }
+    }
+
+    private void PlaceSidewalk()
+    {
+        if (sidewalkBlocks == null || sidewalkBlocks.Length == 0 || sidewalkWidth <= 0) return;
+
+        int sw = sidewalkWidth;
+        int minX = -sw, maxX = width - 1 + sw;
+        int minZ = -sw, maxZ = depth - 1 + sw;
+
+        for (int x = minX; x <= maxX; x++)
+        {
+            for (int z = minZ; z <= maxZ; z++)
+            {
+                // Skip cells occupied by the building
+                if (x >= 0 && x < width && z >= 0 && z < depth && grid[x, 0, z])
+                    continue;
+
+                // Check if within sidewalkWidth (Chebyshev distance) of any ground-floor cell
+                bool nearBuilding = false;
+                int sMinX = Mathf.Max(0, x - sw);
+                int sMaxX = Mathf.Min(width - 1, x + sw);
+                int sMinZ = Mathf.Max(0, z - sw);
+                int sMaxZ = Mathf.Min(depth - 1, z + sw);
+
+                for (int fx = sMinX; fx <= sMaxX && !nearBuilding; fx++)
+                    for (int fz = sMinZ; fz <= sMaxZ && !nearBuilding; fz++)
+                        if (grid[fx, 0, fz] && Mathf.Max(Mathf.Abs(x - fx), Mathf.Abs(z - fz)) <= sw)
+                            nearBuilding = true;
+
+                if (!nearBuilding) continue;
+
+                GameObject prefab = PickFromList(sidewalkBlocks);
+                if (prefab == null) continue;
+
+                GameObject block = InstantiateBlock(prefab);
+                block.transform.localPosition = new Vector3(x, 0, z);
+                block.transform.localRotation = Quaternion.identity;
+                block.name = $"Sidewalk_{prefab.name}_{x}_{z}";
             }
         }
     }
