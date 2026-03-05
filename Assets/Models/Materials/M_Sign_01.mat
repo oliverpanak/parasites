@@ -132,7 +132,7 @@ Material:
     m_Colors:
     - _AOMult: {r: 1, g: 1, b: 1, a: 0}
     - _BASE_COLOR: {r: 0.8, g: 0.8, b: 0.8, a: 1}
-    - _BaseBlend: {r: 1, g: 1, b: 1, a: 0}
+    - _BaseBlend: {r: 0.461, g: 0.461, b: 0.461, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EMISSION_COLOR: {r: 0, g: 0, b: 0, a: 0}

@@ -144,7 +144,7 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _AOMult: {r: 1, g: 1, b: 1, a: 0}
-    - _BaseBlend: {r: 0.574, g: 0.4847945, b: 0.39089397, a: 1}
+    - _BaseBlend: {r: 0.53900003, g: 0.45778084, b: 0.3691781, a: 1}
     - _BaseColor: {r: 0.085, g: 0.085, b: 0.085, a: 1}
     - _Color: {r: 0.08499997, g: 0.08499997, b: 0.08499997, a: 1}
     - _Emission: {r: 0, g: 0, b: 0, a: 0}
